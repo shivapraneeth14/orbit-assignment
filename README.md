@@ -86,7 +86,7 @@ Browser ──GET /api/workspaces──▪──► route handler
 
 - Node.js 20.9+
 - npm
-- PostgreSQL (a local instance, or a free Supabase/Neon project)
+- PostgreSQL (a local instance, or a free Neon project)
 
 ### 1. Clone & install
 
@@ -105,14 +105,19 @@ cp .env.example .env
 Edit `.env`:
 
 ```
-DATABASE_URL="postgresql://<user>@localhost:5432/orbit"
+# Runtime/app connection — use the POOLED URL (host has "-pooler" in it): neon.com → Connect
+DATABASE_URL="postgresql://<user>:<password>@<endpoint>-pooler.<region>.aws.neon.tech/neondb?...&sslmode=require"
+# Prisma CLI (migrations/seed) — use the DIRECT URL (Prisma Migrate must bypass PgBouncer)
+DATABASE_URL_UNPOOLED="postgresql://<user>:<password>@<endpoint>.<region>.aws.neon.tech/neondb?...&sslmode=require"
 AUTH_SECRET="<run: openssl rand -base64 32>"
 NEXTAUTH_URL="http://localhost:3000"
 AUTH_TRUST_HOST="true"
 ```
 
-For a hosted DB (Supabase), use the **Transaction mode** connection string
-(Settings → Database → Connection string → port `6543`).
+Both connection strings come from the Neon console (or `neon env pull`), already
+include `?sslmode=require`, and differ only by the `-pooler` suffix. The pooled
+URL is used by the app at runtime; Prisma CLI commands read `DATABASE_URL_UNPOOLED`
+directly so migrations never traverse the pooler.
 
 ### 3. Create the database (local Postgres)
 
@@ -152,23 +157,26 @@ Open **http://localhost:3000** and log in with the demo credentials above.
 
 ---
 
-## Deploying to Vercel + Supabase
+## Deploying to Vercel + Neon
 
 1. Push the repo to GitHub.
-2. Create a free project at [supabase.com](https://supabase.com). Copy the
-   **Transaction** connection string.
+2. Create a free project at [neon.com](https://neon.com). The **Connect** dialog gives two connection strings (pooled `DATABASE_URL` and direct `DATABASE_URL_UNPOOLED`) — or run `neon link --project-id <id> --branch production` and the CLI writes both into `.env`.
 3. Import the repo at [vercel.com/new](https://vercel.com/new). Vercel auto-detects Next.js.
 4. Add these environment variables in Vercel → Project → Settings → Environment Variables:
 
    | Key | Value |
    | --- | --- |
-   | `DATABASE_URL` | Your Supabase (`*.pooler.supabase.com:6543`) connection string |
+   | `DATABASE_URL` | Neon **pooled** connection string (host has `-pooler`) |
+   | `DATABASE_URL_UNPOOLED` | Neon **direct** connection string |
    | `AUTH_SECRET` | `openssl rand -base64 32` output |
    | `NEXTAUTH_URL` | `https://<your-project>.vercel.app` |
    | `AUTH_TRUST_HOST` | `true` |
 
-5. Redeploy. The `vercel-build` script (`prisma generate && prisma migrate deploy && next build`) regenerates the Prisma client and applies schema to Supabase — no manual migration step needed on production.
-6. Run `npm run prisma:seed` against production once (locally with the prod `DATABASE_URL`, or via a one-off Vercel CLI command) to load demo data.
+5. Deploy. The `vercel-build` script (`prisma generate && prisma migrate deploy && next build`):
+   - regenerates the Prisma client,
+   - applies pending migrations to Neon using the **direct** URL (avoids the pooler),
+   - then builds the app. No manual DB step needed.
+6. Seed production once (local one-off with the prod URLs): `npm run prisma:seed`.
 
 ---
 
