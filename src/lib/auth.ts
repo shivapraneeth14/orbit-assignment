@@ -16,6 +16,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/login",
   },
+  cookies: {
+    sessionToken: { name: "orbit.session-token" },
+    csrfToken: { name: "orbit.csrf-token" },
+    callbackUrl: { name: "orbit.callback-url" },
+  },
   providers: [
     Credentials({
       credentials: {
