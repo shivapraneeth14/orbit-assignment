@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   Plus,
@@ -196,13 +197,14 @@ export function Sidebar({
         <div className="border-t border-stone-100 p-3">
           <Dropdown
             align="right"
+            direction="up"
             width="w-56"
             items={[
               {
                 label: "Sign out",
                 icon: <LogOut className="h-4 w-4" />,
                 danger: true,
-                onClick: () => router.push("/api/auth/signout"),
+                onClick: () => signOut({ callbackUrl: "/login" }),
               },
             ]}
             trigger={

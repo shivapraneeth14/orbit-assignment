@@ -15,10 +15,17 @@ interface DropdownProps {
   trigger: React.ReactNode;
   items: DropdownItem[] | { label: string; items: DropdownItem[] }[];
   align?: "left" | "right";
+  direction?: "down" | "up";
   width?: string;
 }
 
-export function Dropdown({ trigger, items, align = "left", width = "w-56" }: DropdownProps) {
+export function Dropdown({
+  trigger,
+  items,
+  align = "left",
+  direction = "down",
+  width = "w-56",
+}: DropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -54,9 +61,10 @@ export function Dropdown({ trigger, items, align = "left", width = "w-56" }: Dro
       {open && (
         <div
           className={cn(
-            "absolute z-40 mt-1 overflow-hidden rounded-lg border border-stone-200 bg-white py-1 shadow-lg",
+            "absolute z-40 overflow-hidden rounded-lg border border-stone-200 bg-white py-1 shadow-lg",
             width,
-            align === "right" ? "right-0" : "left-0"
+            align === "right" ? "right-0" : "left-0",
+            direction === "up" ? "bottom-full mb-2" : "mt-1"
           )}
         >
           {(
