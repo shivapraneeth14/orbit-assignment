@@ -15,14 +15,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-primary text-white hover:bg-primary-hover focus-visible:ring-primary/40",
+    "bg-primary text-white shadow-[0_1px_2px_rgb(0_0_0/0.18)] hover:bg-primary-hover hover:shadow-glow focus-visible:ring-primary-ring",
   secondary:
-    "bg-primary-soft text-primary hover:bg-indigo-100 focus-visible:ring-primary/30",
-  ghost: "hover:bg-stone-100 text-stone-600 hover:text-stone-900",
+    "bg-primary-soft text-primary hover:bg-primary/15 focus-visible:ring-primary-ring",
+  ghost: "text-ink-muted hover:bg-ink/5 hover:text-ink",
   danger:
-    "bg-red-50 text-red-600 hover:bg-red-100 focus-visible:ring-red-300",
+    "bg-red-50 text-red-600 hover:bg-red-100 focus-visible:ring-red-300 dark:bg-priority-high-soft dark:text-priority-high dark:hover:bg-priority-high/30",
   outline:
-    "border border-stone-200 bg-white text-stone-700 hover:bg-stone-50 focus-visible:ring-stone-300",
+    "border border-border-subtle bg-surface-raised text-ink-muted hover:bg-ink/5 hover:text-ink focus-visible:ring-border-strong",
 };
 
 const sizes: Record<Size, string> = {
@@ -41,9 +41,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         disabled={disabled || loading}
+        aria-busy={loading || undefined}
         className={cn(
-          "inline-flex items-center justify-center rounded-lg font-medium transition-colors",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",
+          "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-150",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-surface",
+          "active:scale-[0.98] motion-reduce:active:scale-100",
           "disabled:opacity-50 disabled:pointer-events-none",
           variants[variant],
           sizes[size],

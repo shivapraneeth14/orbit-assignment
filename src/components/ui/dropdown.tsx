@@ -33,21 +33,29 @@ export function Dropdown({
     const onClick = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
   }, []);
 
   const renderItem = (item: DropdownItem, key: string) => (
     <button
       key={key}
       type="button"
+      role="menuitem"
       onClick={() => {
         setOpen(false);
         item.onClick?.();
       }}
       className={cn(
-        "flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-stone-50",
-        item.danger ? "text-red-600" : "text-stone-700"
+        "flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-ink/5",
+        item.danger ? "text-red-600 dark:text-priority-high" : "text-ink-muted"
       )}
     >
       {item.icon}
@@ -60,8 +68,9 @@ export function Dropdown({
       <div onClick={() => setOpen((o) => !o)}>{trigger}</div>
       {open && (
         <div
+          role="menu"
           className={cn(
-            "absolute z-40 overflow-hidden rounded-lg border border-stone-200 bg-white py-1 shadow-lg",
+            "absolute z-40 overflow-hidden rounded-lg border border-border-subtle bg-surface-raised py-1 shadow-pop animate-in fade-in zoom-in-95 duration-100",
             width,
             align === "right" ? "right-0" : "left-0",
             direction === "up" ? "bottom-full mb-2" : "mt-1"
@@ -74,7 +83,7 @@ export function Dropdown({
           ).map((section, i) => (
             <div key={i}>
               {section.label && (
-                <div className="px-3 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-stone-400">
+                <div className="px-3 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-subtle">
                   {section.label}
                 </div>
               )}

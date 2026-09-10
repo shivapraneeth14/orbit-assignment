@@ -2,17 +2,24 @@ import { cn } from "@/lib/utils";
 import type { TaskPriority, TaskStatus } from "@/generated/prisma/enums";
 
 const statusStyles: Record<TaskStatus, string> = {
-  TODO: "bg-stone-200/70 text-stone-600",
-  IN_PROGRESS: "bg-amber-100 text-amber-700",
-  IN_REVIEW: "bg-blue-100 text-blue-700",
-  DONE: "bg-green-100 text-green-700",
+  TODO: "bg-status-todo-soft text-status-todo",
+  IN_PROGRESS: "bg-status-inprogress-soft text-status-inprogress",
+  IN_REVIEW: "bg-status-inreview-soft text-status-inreview",
+  DONE: "bg-status-done-soft text-status-done",
 };
 
 const priorityStyles: Record<TaskPriority, string> = {
-  LOW: "bg-stone-200/70 text-stone-600",
-  MEDIUM: "bg-amber-100 text-amber-700",
-  HIGH: "bg-orange-100 text-orange-700",
-  URGENT: "bg-red-100 text-red-700",
+  LOW: "bg-status-todo-soft text-status-todo",
+  MEDIUM: "bg-status-inprogress-soft text-status-inprogress",
+  HIGH: "bg-priority-high-soft text-priority-high",
+  URGENT: "bg-priority-urgent-soft text-priority-urgent",
+};
+
+const label: Record<string, string> = {
+  TODO: "To do",
+  IN_PROGRESS: "In progress",
+  IN_REVIEW: "In review",
+  DONE: "Done",
 };
 
 export function StatusBadge({ status }: { status: TaskStatus }) {
@@ -23,7 +30,7 @@ export function StatusBadge({ status }: { status: TaskStatus }) {
         statusStyles[status]
       )}
     >
-      {status.replace("_", " ")}
+      {label[status] ?? status.replace("_", " ")}
     </span>
   );
 }

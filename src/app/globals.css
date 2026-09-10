@@ -39,6 +39,8 @@
   --color-priority-medium: #d97706;
   --color-priority-high: #dc2626;
   --color-priority-urgent: #7c2d12;
+  --color-priority-high-soft: #ffe4e6;
+  --color-priority-urgent-soft: #ffedd5;
 
   /* shadows */
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 16px -6px rgb(0 0 0 / 0.06);
@@ -85,6 +87,8 @@
   --color-priority-medium: #fbbf24;
   --color-priority-high: #f87171;
   --color-priority-urgent: #fb923c;
+  --color-priority-high-soft: #3f1622;
+  --color-priority-urgent-soft: #2b1a0e;
 
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 16px -6px rgb(0 0 0 / 0.5);
   --shadow-pop: 0 12px 32px -8px rgb(0 0 0 / 0.6), 0 4px 12px rgb(0 0 0 / 0.5);
@@ -151,5 +155,42 @@ select {
   }
   .dark .glass {
     background-color: rgb(20 20 28 / 0.72);
+  }
+  .skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .skeleton-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(255 255 255 / 0.55),
+      transparent
+    );
+    animation: shimmer 1.8s infinite;
+  }
+  .dark .skeleton-shimmer::after {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(255 255 255 / 0.08),
+      transparent
+    );
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer::after {
+    animation: none;
   }
 }
