@@ -1,9 +1,12 @@
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, CheckCircle2, Clock, ListTodo } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, ListTodo } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PriorityBadge } from "@/components/ui/badge";
-import { formatDate, isOverdue } from "@/lib/utils";
+import { formatDate, isOverdue, cn } from "@/lib/utils";
+import { DashboardShell, StaggerContainer, StaggerItem } from "@/components/dashboard/dashboard-shell";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { ProjectCard } from "@/components/dashboard/project-card";
 
 export const metadata = { title: "Dashboard" };
 
@@ -52,137 +55,116 @@ export default async function DashboardPage() {
 
   const openTasks = assignedTasks.filter((t) => t.status !== "DONE");
 
+  const statCards = [
+    { id: "assigned", icon: <ListTodo className="h-4 w-4 text-primary" />, label: "Assigned", value: total },
+    { id: "inprogress", icon: <Clock className="h-4 w-4 text-status-inprogress" />, label: "In progress", value: inProgress },
+    { id: "overdue", icon: <AlertTriangle className="h-4 w-4 text-priority-high" />, label: "Overdue", value: overdue.length, alert: overdue.length > 0 },
+    { id: "done", icon: <CheckCircle2 className="h-4 w-4 text-status-done" />, label: "Done", value: done },
+  ];
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-stone-900">
-          Welcome back
-        </h1>
-        <p className="mt-0.5 text-sm text-stone-500">
-          Here&apos;s what&apos;s on your plate.
-        </p>
-      </div>
+      <DashboardShell>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold tracking-tight text-ink">
+            Welcome back
+          </h1>
+          <p className="mt-0.5 text-sm text-ink-muted">
+            Here&apos;s what&apos;s on your plate.
+          </p>
+        </div>
 
-      <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard icon={<ListTodo className="h-4 w-4 text-primary" />} label="Assigned" value={total} />
-        <StatCard icon={<Clock className="h-4 w-4 text-amber-500" />} label="In progress" value={inProgress} />
-        <StatCard
-          icon={<AlertTriangle className="h-4 w-4 text-red-500" />}
-          label="Overdue"
-          value={overdue.length}
-          alert={overdue.length > 0}
-        />
-        <StatCard icon={<CheckCircle2 className="h-4 w-4 text-green-500" />} label="Done" value={done} />
-      </div>
-
-      <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
-        <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-stone-700">My open tasks</h2>
-            <span className="text-xs text-stone-400">
-              {openTasks.length} {openTasks.length === 1 ? "task" : "tasks"}
-            </span>
+        <StaggerContainer className="mb-8">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {statCards.map((s) => (
+              <StaggerItem key={s.id}>
+                <StatCard
+                  icon={s.icon}
+                  label={s.label}
+                  value={s.value}
+                  alert={s.alert}
+                />
+              </StaggerItem>
+            ))}
           </div>
-          {openTasks.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-stone-300 bg-stone-50/40 py-12 text-center">
-              <CheckCircle2 className="mb-2 h-8 w-8 text-green-300" />
-              <p className="text-sm font-medium text-stone-700">You&apos;re all caught up!</p>
-              <p className="mt-1 text-xs text-stone-400">No open tasks assigned to you.</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-stone-100 overflow-hidden rounded-xl border border-stone-200 bg-white">
-              {openTasks.map((task) => {
-                const o = task.dueDate ? isOverdue(task.dueDate) : false;
-                return (
-                  <Link
-                    key={task.id}
-                    href={`/project/${task.projectId}`}
-                    className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-stone-50"
-                  >
-                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: task.project.color }} />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-stone-800">{task.title}</p>
-                      <p className="truncate text-xs text-stone-400">{task.project.name}</p>
-                    </div>
-                    {task.dueDate && (
-                      <span className={`text-xs ${o ? "font-semibold text-red-600" : "text-stone-400"}`}>
-                        {o ? "Overdue · " : ""}
-                        {formatDate(task.dueDate)}
-                      </span>
-                    )}
-                    <PriorityBadge priority={task.priority} />
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </section>
+        </StaggerContainer>
 
-        <aside>
-          <h2 className="mb-3 text-sm font-semibold text-stone-700">Recent projects</h2>
-          <div className="space-y-2">
-            {recentProjects.flatMap((m) =>
-              m.workspace.projects.map((p) => {
-                const total = p.tasks.length;
-                const done = p.tasks.filter((t) => t.status === "DONE").length;
-                const progress = total === 0 ? 0 : Math.round((done / total) * 100);
-                return (
-                  <Link
-                    key={p.id}
-                    href={`/project/${p.id}`}
-                    className="block rounded-xl border border-stone-200 bg-white p-3 transition-shadow hover:shadow-sm"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-2 text-sm font-medium text-stone-800">
-                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
-                        {p.name}
-                      </span>
-                      <ArrowRight className="h-3.5 w-3.5 text-stone-300" />
-                    </div>
-                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-stone-100">
-                      <div
-                        className="h-full rounded-full bg-primary transition-all"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </div>
-                    <div className="mt-1 flex items-center justify-between text-xs text-stone-400">
-                      <span>{done}/{total} done</span>
-                      <span>{progress}%</span>
-                    </div>
-                  </Link>
-                );
-              })
-            )}
-            {recentProjects.every((m) => m.workspace.projects.length === 0) && (
-              <div className="rounded-xl border border-dashed border-stone-300 bg-stone-50/40 p-6 text-center text-sm text-stone-400">
-                No projects yet.
+        <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-ink-muted">My open tasks</h2>
+              <span className="text-xs text-ink-subtle">
+                {openTasks.length} {openTasks.length === 1 ? "task" : "tasks"}
+              </span>
+            </div>
+            {openTasks.length === 0 ? (
+              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border-strong bg-surface-muted py-12 text-center">
+                <CheckCircle2 className="mb-2 h-8 w-8 text-status-done" />
+                <p className="text-sm font-medium text-ink">You&apos;re all caught up!</p>
+                <p className="mt-1 text-xs text-ink-subtle">No open tasks assigned to you.</p>
               </div>
+            ) : (
+              <StaggerContainer>
+                <div className="divide-y divide-border-subtle overflow-hidden rounded-xl border border-border-subtle bg-surface-raised shadow-card">
+                  {openTasks.map((task) => {
+                    const o = task.dueDate ? isOverdue(task.dueDate) : false;
+                    return (
+                      <StaggerItem key={task.id}>
+                        <Link
+                          href={`/project/${task.projectId}`}
+                          className="group flex items-center gap-3 px-4 py-3 transition-colors hover:bg-ink/[0.03]"
+                        >
+                          <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: task.project.color }} />
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-medium text-ink">{task.title}</p>
+                            <p className="truncate text-xs text-ink-subtle">{task.project.name}</p>
+                          </div>
+                          {task.dueDate && (
+                            <span className={cn("text-xs", o ? "font-semibold text-priority-high" : "text-ink-subtle")}>
+                              {o ? "Overdue · " : ""}
+                              {formatDate(task.dueDate)}
+                            </span>
+                          )}
+                          <PriorityBadge priority={task.priority} />
+                        </Link>
+                      </StaggerItem>
+                    );
+                  })}
+                </div>
+              </StaggerContainer>
             )}
-          </div>
-        </aside>
-      </div>
-    </div>
-  );
-}
+          </section>
 
-function StatCard({
-  icon,
-  label,
-  value,
-  alert,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-  alert?: boolean;
-}) {
-  return (
-    <div className="rounded-xl border border-stone-200 bg-white p-4">
-      <div className="flex items-center gap-2 text-stone-400">{icon}</div>
-      <p className={`mt-3 text-2xl font-bold tracking-tight ${alert ? "text-red-600" : "text-stone-900"}`}>
-        {value}
-      </p>
-      <p className="text-xs font-medium uppercase tracking-wide text-stone-400">{label}</p>
+          <aside>
+            <h2 className="mb-3 text-sm font-semibold text-ink-muted">Recent projects</h2>
+            <div className="space-y-2">
+              {recentProjects.flatMap((m) =>
+                m.workspace.projects.map((p) => {
+                  const totalTasks = p.tasks.length;
+                  const doneTasks = p.tasks.filter((t) => t.status === "DONE").length;
+                  const progress = totalTasks === 0 ? 0 : Math.round((doneTasks / totalTasks) * 100);
+                  return (
+                    <ProjectCard
+                      key={p.id}
+                      projectId={p.id}
+                      name={p.name}
+                      color={p.color}
+                      doneCount={doneTasks}
+                      totalCount={totalTasks}
+                      progress={progress}
+                    />
+                  );
+                })
+              )}
+              {recentProjects.every((m) => m.workspace.projects.length === 0) && (
+                <div className="rounded-xl border border-dashed border-border-strong bg-surface-muted p-6 text-center text-sm text-ink-subtle">
+                  No projects yet.
+                </div>
+              )}
+            </div>
+          </aside>
+        </div>
+      </DashboardShell>
     </div>
   );
 }
