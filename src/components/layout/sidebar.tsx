@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { motion } from "framer-motion";
 import {
   LayoutDashboard,
   Plus,
@@ -11,12 +12,12 @@ import {
   LogOut,
   CheckCircle2,
   Layers,
-  Zap,
 } from "lucide-react";
 import type { Workspace, Project } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/ui/avatar";
 import { Dropdown, type DropdownItem } from "@/components/ui/dropdown";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 interface SidebarProps {
   workspaces: Workspace[];
@@ -91,25 +92,25 @@ export function Sidebar({
     <>
       {open && (
         <div
-          className="fixed inset-0 z-30 bg-black/30 lg:hidden"
+          data-testid="sidebar-backdrop"
+          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-[2px] lg:hidden animate-in fade-in duration-150"
           onClick={onClose}
         />
       )}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-stone-200 bg-white transition-transform duration-200 lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border-subtle bg-surface-raised transition-transform duration-200 lg:static lg:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex h-14 items-center justify-between border-b border-stone-100 px-4">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
-              <Zap className="h-4 w-4 text-white" fill="currentColor" />
+        <div className="flex h-14 items-center justify-between border-b border-border-subtle px-4">
+          <Link href="/dashboard" className="flex items-center gap-2" onClick={onClose}>
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-gradient shadow-glow">
+              <span className="text-sm font-bold text-white">O</span>
             </div>
-            <span className="text-base font-bold tracking-tight text-stone-900">
-              ORBIT
-            </span>
+            <span className="text-base font-bold tracking-tight text-ink">ORBIT</span>
           </Link>
+          <ThemeToggle />
         </div>
 
         <div className="px-3 pt-3">
@@ -117,11 +118,11 @@ export function Sidebar({
             items={workspaceSwitcherItems}
             width="w-full"
             trigger={
-              <button className="flex w-full items-center gap-2 rounded-lg border border-stone-200 px-2.5 py-2 text-left hover:bg-stone-50">
+              <button className="flex w-full items-center gap-2 rounded-lg border border-border-subtle px-2.5 py-2 text-left transition-colors hover:bg-ink/5">
                 <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary-soft text-xs font-bold text-primary">
                   {currentWorkspace.name.slice(0, 2).toUpperCase()}
                 </span>
-                <span className="flex-1 truncate text-sm font-medium text-stone-800">
+                <span className="flex-1 truncate text-sm font-medium text-ink">
                   {currentWorkspace.name}
                 </span>
               </button>
@@ -136,25 +137,35 @@ export function Sidebar({
               href={item.href}
               onClick={onClose}
               className={cn(
-                "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "relative flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 item.active
-                  ? "bg-primary-soft text-primary"
-                  : "text-stone-600 hover:bg-stone-100 hover:text-stone-900"
+                  ? "text-primary"
+                  : "text-ink-muted hover:bg-ink/5 hover:text-ink"
               )}
             >
-              {item.icon}
-              {item.label}
+              {item.active && (
+                <motion.span
+                  layoutId="nav-active"
+                  transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
+                  className="absolute inset-0 rounded-lg bg-primary-soft"
+                />
+              )}
+              <span className="relative flex items-center gap-2.5">
+                {item.icon}
+                {item.label}
+              </span>
             </Link>
           ))}
 
           <div className="mt-4 flex items-center justify-between px-3 pb-1 pt-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-stone-400">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-ink-subtle">
               Projects
             </span>
             <button
               onClick={onOpenCreateProject}
-              className="rounded-md p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-700"
+              className="rounded-md p-1 text-ink-subtle transition-colors hover:bg-ink/5 hover:text-ink"
               title="New project"
+              aria-label="New project"
             >
               <Plus className="h-4 w-4" />
             </button>
@@ -162,7 +173,7 @@ export function Sidebar({
 
           <div className="space-y-0.5">
             {activeProjects.length === 0 && (
-              <p className="px-3 py-1 text-xs text-stone-400">No projects yet</p>
+              <p className="px-3 py-1 text-xs text-ink-subtle">No projects yet</p>
             )}
             {activeProjects.map((project) => {
               const isActive =
@@ -176,8 +187,8 @@ export function Sidebar({
                   className={cn(
                     "group flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition-colors",
                     isActive
-                      ? "bg-stone-100 font-medium text-stone-900"
-                      : "text-stone-500 hover:bg-stone-100 hover:text-stone-800"
+                      ? "bg-ink/5 font-medium text-ink"
+                      : "text-ink-muted hover:bg-ink/5 hover:text-ink"
                   )}
                 >
                   <span
@@ -186,7 +197,7 @@ export function Sidebar({
                   />
                   <span className="flex-1 truncate">{project.name}</span>
                   {project.progress === 100 && (
-                    <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-status-done" />
                   )}
                 </Link>
               );
@@ -194,7 +205,7 @@ export function Sidebar({
           </div>
         </nav>
 
-        <div className="border-t border-stone-100 p-3">
+        <div className="border-t border-border-subtle p-3">
           <Dropdown
             align="right"
             direction="up"
@@ -208,13 +219,13 @@ export function Sidebar({
               },
             ]}
             trigger={
-              <div className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-stone-50">
+              <div className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-ink/5">
                 <Avatar name={userName} color={avatarColor} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-stone-800">
+                  <p className="truncate text-sm font-medium text-ink">
                     {userName}
                   </p>
-                  <p className="truncate text-xs text-stone-400">{userEmail}</p>
+                  <p className="truncate text-xs text-ink-subtle">{userEmail}</p>
                 </div>
               </div>
             }

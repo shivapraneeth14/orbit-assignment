@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Menu } from "lucide-react";
 import type { Workspace, Project } from "@/lib/types";
 import { Sidebar } from "@/components/layout/sidebar";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { CreateProjectModal } from "@/components/workspace/create-project-modal";
 
 interface ShellProps {
@@ -50,18 +51,22 @@ export function Shell({
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-stone-200 bg-white px-4 lg:hidden">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border-subtle px-4 lg:hidden glass">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="rounded-md p-1.5 text-stone-500 hover:bg-stone-100"
+            aria-label="Open menu"
+            className="rounded-md p-1.5 text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink"
           >
             <Menu className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-brand-gradient">
               <span className="text-xs font-bold text-white">O</span>
             </div>
-            <span className="text-sm font-bold text-stone-900">ORBIT</span>
+            <span className="text-sm font-bold tracking-tight text-ink">ORBIT</span>
+          </div>
+          <div className="ml-auto">
+            <ThemeToggle />
           </div>
         </header>
         <main className="flex-1 overflow-y-auto bg-surface">{children}</main>
