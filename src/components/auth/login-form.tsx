@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export function LoginForm() {
   const router = useRouter();
@@ -68,10 +69,9 @@ export function LoginForm() {
           <label className="text-sm font-medium text-stone-700" htmlFor="password">
             Password
           </label>
-          <Input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             required
             autoComplete="current-password"
             placeholder="••••••••"
