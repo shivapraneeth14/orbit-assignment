@@ -37,14 +37,14 @@ export function CreateWorkspaceForm() {
   }
 
   return (
-    <div className="rounded-xl border border-stone-200 bg-white p-6">
-      <h1 className="text-lg font-bold text-stone-900">Create a workspace</h1>
-      <p className="mt-1 text-sm text-stone-500">
+    <div className="rounded-xl border border-border-subtle bg-surface-raised p-6">
+      <h1 className="text-lg font-bold text-ink">Create a workspace</h1>
+      <p className="mt-1 text-sm text-ink-muted">
         Workspaces group your projects and team members.
       </p>
       <form onSubmit={handleSubmit} className="mt-5 space-y-4">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-stone-700" htmlFor="ws-name">
+          <label className="text-sm font-medium text-ink-muted" htmlFor="ws-name">
             Workspace name
           </label>
           <Input

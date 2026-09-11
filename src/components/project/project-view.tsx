@@ -111,21 +111,21 @@ export function ProjectView({ project, members, initialTasks }: ProjectViewProps
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex h-14 shrink-0 items-center gap-3 border-b border-stone-200 bg-white px-4 sm:px-6">
+      <div className="flex h-14 shrink-0 items-center gap-3 border-b border-border-subtle bg-surface-raised px-4 sm:px-6">
         <span className="h-3 w-3 shrink-0 rounded-md" style={{ backgroundColor: project.color }} />
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-base font-semibold text-stone-900">{project.name}</h1>
+          <h1 className="truncate text-base font-semibold text-ink">{project.name}</h1>
           {project.description && (
-            <p className="hidden truncate text-xs text-stone-400 sm:block">{project.description}</p>
+            <p className="hidden truncate text-xs text-ink-subtle sm:block">{project.description}</p>
           )}
         </div>
 
-        <div className="flex items-center gap-1 rounded-lg border border-stone-200 bg-stone-50 p-0.5">
+        <div className="flex items-center gap-1 rounded-lg border border-border-subtle bg-surface-muted p-0.5">
           <button
             onClick={() => setView("board")}
             className={cn(
               "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
-              view === "board" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-800"
+              view === "board" ? "bg-surface-raised text-ink shadow-sm" : "text-ink-muted hover:text-ink"
             )}
           >
             <KanbanSquare className="h-3.5 w-3.5" />
@@ -135,7 +135,7 @@ export function ProjectView({ project, members, initialTasks }: ProjectViewProps
             onClick={() => setView("list")}
             className={cn(
               "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
-              view === "list" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-800"
+              view === "list" ? "bg-surface-raised text-ink shadow-sm" : "text-ink-muted hover:text-ink"
             )}
           >
             <List className="h-3.5 w-3.5" />
@@ -152,7 +152,7 @@ export function ProjectView({ project, members, initialTasks }: ProjectViewProps
           align="right"
           items={actions}
           trigger={
-            <button className="rounded-md p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-700">
+            <button className="rounded-md p-1.5 text-ink-subtle hover:bg-surface-muted hover:text-ink">
               <MoreVertical className="h-4 w-4" />
             </button>
           }

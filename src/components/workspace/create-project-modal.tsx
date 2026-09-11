@@ -54,7 +54,7 @@ export function CreateProjectModal({ open, onClose, workspaceId, onCreated }: Cr
     <Modal open={open} onClose={onClose} title="New project" size="sm">
       <form onSubmit={handleSubmit} className="space-y-4 p-5">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-stone-700" htmlFor="project-name">
+          <label className="text-sm font-medium text-ink-muted" htmlFor="project-name">
             Project name
           </label>
           <Input
@@ -67,8 +67,8 @@ export function CreateProjectModal({ open, onClose, workspaceId, onCreated }: Cr
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-stone-700" htmlFor="project-desc">
-            Description <span className="text-stone-400">(optional)</span>
+          <label className="text-sm font-medium text-ink-muted" htmlFor="project-desc">
+            Description <span className="text-ink-subtle">(optional)</span>
           </label>
           <Textarea
             id="project-desc"
@@ -79,14 +79,14 @@ export function CreateProjectModal({ open, onClose, workspaceId, onCreated }: Cr
           />
         </div>
         <div className="space-y-1.5">
-          <span className="text-sm font-medium text-stone-700">Color</span>
+          <span className="text-sm font-medium text-ink-muted">Color</span>
           <div className="flex flex-wrap gap-2">
             {PRESET_COLORS.map((c) => (
               <button
                 key={c}
                 type="button"
                 onClick={() => setColor(c)}
-                className={`h-7 w-7 rounded-full transition-transform ${color === c ? "ring-2 ring-offset-2 ring-stone-400 scale-110" : "hover:scale-110"}`}
+                className={`h-7 w-7 rounded-full transition-transform ${color === c ? "ring-2 ring-offset-2 ring-border-strong scale-110" : "hover:scale-110"}`}
                 style={{ backgroundColor: c }}
               />
             ))}

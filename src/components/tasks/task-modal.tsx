@@ -164,15 +164,15 @@ function TaskPanel({
   const overdue = task.dueDate ? isOverdue(task.dueDate) : false;
 
   return (
-    <div className="relative z-10 flex h-full w-full max-w-lg flex-col bg-white shadow-2xl animate-in slide-in-from-right duration-200">
-      <div className="flex items-center justify-between border-b border-stone-100 px-5 py-3">
+    <div className="relative z-10 flex h-full w-full max-w-lg flex-col bg-surface-raised shadow-2xl animate-in slide-in-from-right duration-200">
+      <div className="flex items-center justify-between border-b border-border-subtle px-5 py-3">
         <div className="flex items-center gap-2">
           <StatusBadge status={status} />
           <PriorityBadge priority={priority} />
         </div>
         <button
           onClick={onClose}
-          className="rounded-md p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-600"
+          className="rounded-md p-1 text-ink-subtle hover:bg-surface-muted hover:text-ink"
         >
           <X className="h-5 w-5" />
         </button>
@@ -180,7 +180,7 @@ function TaskPanel({
 
       <div className="flex-1 space-y-5 overflow-y-auto p-5">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-stone-400">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-subtle">
             Title
           </label>
           <textarea
@@ -189,13 +189,13 @@ function TaskPanel({
             onBlur={() =>
               title.trim() && title.trim() !== task.title && save({ title: title.trim() })
             }
-            className="w-full resize-none rounded-lg border border-transparent bg-transparent px-1 py-1 text-lg font-semibold leading-snug text-stone-900 outline-none transition-colors hover:border-stone-200 focus:border-primary"
+            className="w-full resize-none rounded-lg border border-transparent bg-transparent px-1 py-1 text-lg font-semibold leading-snug text-ink outline-none transition-colors hover:border-border-subtle focus:border-primary"
             rows={2}
           />
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-stone-400">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-subtle">
             Description
           </label>
           <Textarea
@@ -209,7 +209,7 @@ function TaskPanel({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-stone-400">
+            <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-subtle">
               Status
             </span>
             <Select
@@ -225,7 +225,7 @@ function TaskPanel({
             />
           </div>
           <div>
-            <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-stone-400">
+            <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-subtle">
               Priority
             </span>
             <Select
@@ -244,7 +244,7 @@ function TaskPanel({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-stone-400">
+            <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-subtle">
               Assignee
             </span>
             <Select
@@ -261,7 +261,7 @@ function TaskPanel({
             />
           </div>
           <div>
-            <span className="mb-1.5 flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-stone-400">
+            <span className="mb-1.5 flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-ink-subtle">
               <Calendar className="h-3 w-3" /> Due date
             </span>
             <Input
@@ -278,7 +278,7 @@ function TaskPanel({
         </div>
 
         <div>
-          <span className="mb-2 block text-xs font-semibold uppercase tracking-wide text-stone-400">
+          <span className="mb-2 block text-xs font-semibold uppercase tracking-wide text-ink-subtle">
             Comments ({comments.length})
           </span>
           <div className="space-y-3">
@@ -289,16 +289,16 @@ function TaskPanel({
                   color={c.author.avatarColor}
                   className="h-6 w-6 text-[10px]"
                 />
-                <div className="min-w-0 flex-1 rounded-lg bg-stone-50 px-3 py-2">
+                <div className="min-w-0 flex-1 rounded-lg bg-surface-muted px-3 py-2">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-sm font-medium text-stone-800">
+                    <span className="text-sm font-medium text-ink">
                       {c.author.name}
                     </span>
-                    <span className="text-xs text-stone-400">
+                    <span className="text-xs text-ink-subtle">
                       {formatDate(c.createdAt)}
                     </span>
                   </div>
-                  <p className="mt-0.5 whitespace-pre-wrap text-sm text-stone-600">
+                  <p className="mt-0.5 whitespace-pre-wrap text-sm text-ink-muted">
                     {c.body}
                   </p>
                 </div>
@@ -319,7 +319,7 @@ function TaskPanel({
         </div>
       </div>
 
-      <div className="border-t border-stone-100 px-5 py-3">
+      <div className="border-t border-border-subtle px-5 py-3">
         <Button
           variant="danger"
           size="sm"

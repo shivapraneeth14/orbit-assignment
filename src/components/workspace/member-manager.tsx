@@ -80,9 +80,9 @@ export function MemberManager({
       {canManage && (
         <form
           onSubmit={invite}
-          className="rounded-xl border border-stone-200 bg-white p-4"
+          className="rounded-xl border border-border-subtle bg-surface-raised p-4"
         >
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-stone-800">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-ink">
             <Users className="h-4 w-4 text-primary" />
             Invite a member
           </h3>
@@ -108,35 +108,35 @@ export function MemberManager({
               Invite
             </Button>
           </div>
-          <p className="mt-2 text-xs text-stone-400">
+          <p className="mt-2 text-xs text-ink-subtle">
             The invited person must have an ORBIT account to join {workspaceName}.
           </p>
         </form>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-stone-200 bg-white">
-        <div className="border-b border-stone-100 px-4 py-3 text-sm font-semibold text-stone-700">
+      <div className="overflow-hidden rounded-xl border border-border-subtle bg-surface-raised">
+        <div className="border-b border-border-subtle px-4 py-3 text-sm font-semibold text-ink-muted">
           Members ({members.length})
         </div>
-        <div className="divide-y divide-stone-100">
+        <div className="divide-y divide-border-subtle">
           {members.map((member) => {
             const isSelf = member.userId === currentUserId;
             return (
               <div key={member.id} className="flex items-center gap-3 px-4 py-3">
                 <Avatar name={member.name} color={member.avatarColor} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-stone-800">
-                    {member.name} {isSelf && <span className="text-stone-400">(you)</span>}
+                  <p className="truncate text-sm font-medium text-ink">
+                    {member.name} {isSelf && <span className="text-ink-subtle">(you)</span>}
                   </p>
-                  <p className="truncate text-xs text-stone-400">{member.email}</p>
+                  <p className="truncate text-xs text-ink-subtle">{member.email}</p>
                 </div>
-                <span className="rounded-md bg-stone-100 px-2 py-0.5 text-xs font-medium text-stone-500">
+                <span className="rounded-md bg-surface-muted px-2 py-0.5 text-xs font-medium text-ink-muted">
                   {roleLabels[member.role]}
                 </span>
                 {canManage && member.role !== "OWNER" && (
                   <button
                     onClick={() => removeMember(member.id, member.name)}
-                    className="rounded-md p-1.5 text-stone-400 hover:bg-red-50 hover:text-red-600"
+                    className="rounded-md p-1.5 text-ink-subtle hover:bg-red-500/10 hover:text-red-400"
                     title="Remove member"
                   >
                     <UserMinus className="h-4 w-4" />

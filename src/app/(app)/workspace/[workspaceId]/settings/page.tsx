@@ -38,8 +38,8 @@ export default async function WorkspaceSettingsPage({ params }: PageProps) {
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-stone-900">Workspace settings</h1>
-        <p className="mt-0.5 text-sm text-stone-500">
+        <h1 className="text-2xl font-bold tracking-tight text-ink">Workspace settings</h1>
+        <p className="mt-0.5 text-sm text-ink-muted">
           Manage your workspace members and roles.
         </p>
       </div>

@@ -77,14 +77,14 @@ export function TaskListView({ tasks, onTaskClick }: TaskListViewProps) {
   }, [tasks, sortKey, sortDir]);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-stone-200 bg-white">
-      <div className="grid grid-cols-12 items-center gap-2 border-b border-stone-200 bg-stone-50/80 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-stone-500">
+    <div className="overflow-hidden rounded-xl border border-border-subtle bg-surface-raised">
+      <div className="grid grid-cols-12 items-center gap-2 border-b border-border-subtle bg-surface-muted/80 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">
         {sortableColumns.map((col) => (
           <button
             key={col.key}
             onClick={() => toggleSort(col.key)}
             className={cn(
-              "flex items-center gap-1 hover:text-stone-800 text-left",
+              "flex items-center gap-1 hover:text-ink text-left",
               col.key === "title" && "col-span-4",
               col.key === "status" && "col-span-2",
               col.key === "priority" && "col-span-2",
@@ -104,9 +104,9 @@ export function TaskListView({ tasks, onTaskClick }: TaskListViewProps) {
         ))}
       </div>
 
-      <div className="divide-y divide-stone-100">
+      <div className="divide-y divide-border-subtle">
         {sorted.length === 0 && (
-          <div className="px-4 py-16 text-center text-sm text-stone-400">
+          <div className="px-4 py-16 text-center text-sm text-ink-subtle">
             No tasks yet — create your first one.
           </div>
         )}
@@ -116,9 +116,9 @@ export function TaskListView({ tasks, onTaskClick }: TaskListViewProps) {
             <button
               key={task.id}
               onClick={() => onTaskClick(task)}
-              className="grid w-full grid-cols-12 items-center gap-2 px-4 py-3 text-left transition-colors hover:bg-stone-50"
+              className="grid w-full grid-cols-12 items-center gap-2 px-4 py-3 text-left transition-colors hover:bg-surface-muted"
             >
-              <span className="col-span-4 truncate text-sm font-medium text-stone-800">
+              <span className="col-span-4 truncate text-sm font-medium text-ink">
                 {task.title}
               </span>
               <span className="col-span-2">
@@ -131,19 +131,19 @@ export function TaskListView({ tasks, onTaskClick }: TaskListViewProps) {
                 {task.assignee && (
                   <>
                     <Avatar name={task.assignee.name} color={task.assignee.avatarColor} className="h-5 w-5 text-[9px]" />
-                    <span className="truncate text-sm text-stone-600">
+                    <span className="truncate text-sm text-ink-muted">
                       {task.assignee.name}
                     </span>
                   </>
                 )}
                 {!task.assignee && (
-                  <span className="text-sm text-stone-400">Unassigned</span>
+                  <span className="text-sm text-ink-subtle">Unassigned</span>
                 )}
               </span>
               <span
                 className={cn(
                   "col-span-2 flex items-center gap-1 text-sm",
-                  overdue ? "font-medium text-red-600" : "text-stone-500"
+                  overdue ? "font-medium text-red-600" : "text-ink-muted"
                 )}
               >
                 {task.dueDate && <Calendar className="h-3.5 w-3.5" />}

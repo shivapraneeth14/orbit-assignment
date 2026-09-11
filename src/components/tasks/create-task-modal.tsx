@@ -73,7 +73,7 @@ export function CreateTaskModal({
     <Modal open={open} onClose={onClose} title="New task" size="md">
       <form onSubmit={handleSubmit} className="space-y-4 p-5">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-stone-700" htmlFor="task-title">
+          <label className="text-sm font-medium text-ink-muted" htmlFor="task-title">
             Title
           </label>
           <Input
@@ -86,8 +86,8 @@ export function CreateTaskModal({
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-stone-700" htmlFor="task-desc">
-            Description <span className="text-stone-400">(optional)</span>
+          <label className="text-sm font-medium text-ink-muted" htmlFor="task-desc">
+            Description <span className="text-ink-subtle">(optional)</span>
           </label>
           <Textarea
             id="task-desc"
@@ -99,7 +99,7 @@ export function CreateTaskModal({
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <span className="text-sm font-medium text-stone-700">Status</span>
+            <span className="text-sm font-medium text-ink-muted">Status</span>
             <Select
               value={status}
               onChange={(v) => setStatus(v as TaskStatus)}
@@ -107,7 +107,7 @@ export function CreateTaskModal({
             />
           </div>
           <div className="space-y-1.5">
-            <span className="text-sm font-medium text-stone-700">Priority</span>
+            <span className="text-sm font-medium text-ink-muted">Priority</span>
             <Select
               value={priority}
               onChange={(v) => setPriority(v as TaskPriority)}
@@ -117,7 +117,7 @@ export function CreateTaskModal({
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <span className="text-sm font-medium text-stone-700">Assignee</span>
+            <span className="text-sm font-medium text-ink-muted">Assignee</span>
             <Select
               value={assigneeId}
               onChange={setAssigneeId}
@@ -129,7 +129,7 @@ export function CreateTaskModal({
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-stone-700" htmlFor="task-due">
+            <label className="text-sm font-medium text-ink-muted" htmlFor="task-due">
               Due date
             </label>
             <Input id="task-due" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />

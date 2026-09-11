@@ -47,13 +47,13 @@ export function LoginForm() {
         <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/30">
           <Zap className="h-6 w-6 text-white" fill="currentColor" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-stone-900">Log in to ORBIT</h1>
-        <p className="mt-1 text-sm text-stone-500">Plan. Assign. Ship.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-ink">Log in to ORBIT</h1>
+        <p className="mt-1 text-sm text-ink-muted">Plan. Assign. Ship.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-stone-700" htmlFor="email">
+          <label className="text-sm font-medium text-ink-muted" htmlFor="email">
             Email
           </label>
           <Input
@@ -66,7 +66,7 @@ export function LoginForm() {
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-stone-700" htmlFor="password">
+          <label className="text-sm font-medium text-ink-muted" htmlFor="password">
             Password
           </label>
           <PasswordInput
@@ -82,7 +82,7 @@ export function LoginForm() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-stone-500">
+      <p className="mt-6 text-center text-sm text-ink-muted">
         Don&apos;t have an account?{" "}
         <Link href="/signup" className="font-medium text-primary hover:underline">
           Sign up

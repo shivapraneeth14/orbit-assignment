@@ -41,8 +41,8 @@ export default async function WorkspacePage({ params }: PageProps) {
     <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-stone-900">{workspace.name}</h1>
-          <p className="mt-0.5 text-sm text-stone-500">
+          <h1 className="text-2xl font-bold tracking-tight text-ink">{workspace.name}</h1>
+          <p className="mt-0.5 text-sm text-ink-muted">
             {workspace.members.length} {workspace.members.length === 1 ? "member" : "members"} ·{" "}
             {workspace.projects.length} {workspace.projects.length === 1 ? "project" : "projects"}
           </p>
@@ -51,10 +51,10 @@ export default async function WorkspacePage({ params }: PageProps) {
       </div>
 
       {workspace.projects.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-stone-300 bg-stone-50/40 py-16 text-center">
-          <FolderKanban className="mb-3 h-10 w-10 text-stone-300" />
-          <h3 className="text-sm font-semibold text-stone-700">No projects yet</h3>
-          <p className="mt-1 text-sm text-stone-500">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border-strong bg-surface-muted/60 py-16 text-center">
+          <FolderKanban className="mb-3 h-10 w-10 text-ink-subtle" />
+          <h3 className="text-sm font-semibold text-ink-muted">No projects yet</h3>
+          <p className="mt-1 text-sm text-ink-muted">
             Break your work into projects to get started.
           </p>
           <div className="mt-4">
@@ -74,32 +74,32 @@ export default async function WorkspacePage({ params }: PageProps) {
                   <Link
                     key={project.id}
                     href={`/project/${project.id}`}
-                    className="group rounded-xl border border-stone-200 bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md"
+                    className="group rounded-xl border border-border-subtle bg-surface-raised p-5 transition-all hover:border-primary/40 hover:shadow-md"
                   >
                     <div className="mb-3 flex items-center justify-between">
                       <span className="h-3 w-3 rounded-md" style={{ backgroundColor: project.color }} />
-                      <span className="text-xs text-stone-400">
+                      <span className="text-xs text-ink-subtle">
                         {total} {total === 1 ? "task" : "tasks"}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-stone-800 group-hover:text-primary">
+                    <h3 className="font-semibold text-ink group-hover:text-primary">
                       {project.name}
                     </h3>
                     {project.description && (
-                      <p className="mt-1 line-clamp-2 text-sm text-stone-500">
+                      <p className="mt-1 line-clamp-2 text-sm text-ink-muted">
                         {project.description}
                       </p>
                     )}
                     <div className="mt-4">
-                      <div className="h-1.5 overflow-hidden rounded-full bg-stone-100">
+                      <div className="h-1.5 overflow-hidden rounded-full bg-surface-muted">
                         <div
                           className="h-full rounded-full transition-all"
                           style={{ width: `${progress}%`, backgroundColor: project.color }}
                         />
                       </div>
-                      <div className="mt-1 flex items-center justify-between text-xs text-stone-400">
+                      <div className="mt-1 flex items-center justify-between text-xs text-ink-subtle">
                         <span>{done}/{total} done</span>
-                        <span className="font-medium text-stone-600">{progress}%</span>
+                        <span className="font-medium text-ink-muted">{progress}%</span>
                       </div>
                     </div>
                   </Link>
@@ -109,7 +109,7 @@ export default async function WorkspacePage({ params }: PageProps) {
 
           {workspace.projects.some((p) => p.status === "ARCHIVED") && (
             <div className="mt-10">
-              <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-stone-500">
+              <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-ink-muted">
                 <Archive className="h-4 w-4" /> Archived
               </h2>
               <div className="space-y-2">
@@ -119,11 +119,11 @@ export default async function WorkspacePage({ params }: PageProps) {
                     <Link
                       key={project.id}
                       href={`/project/${project.id}`}
-                      className="flex items-center gap-3 rounded-lg border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm text-stone-500 hover:bg-stone-100"
+                      className="flex items-center gap-3 rounded-lg border border-border-subtle bg-surface-muted px-4 py-2.5 text-sm text-ink-muted hover:bg-surface-raised"
                     >
                       <span className="h-2 w-2 rounded-full" style={{ backgroundColor: project.color }} />
                       {project.name}
-                      <span className="ml-auto text-xs text-stone-400">Archived</span>
+                      <span className="ml-auto text-xs text-ink-subtle">Archived</span>
                     </Link>
                   ))}
               </div>
