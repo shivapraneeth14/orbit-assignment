@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -11,6 +11,7 @@ import {
   type DragOverEvent,
   type DragEndEvent,
 } from "@dnd-kit/core";
+import { motion, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
 import type { Task, TaskStatus } from "@/lib/types";
 import { TASK_STATUSES, TASK_STATUS_LABEL } from "@/lib/types";
@@ -24,14 +25,13 @@ interface KanbanBoardProps {
   setTasks: SetTasks;
   onAddTask: (status: TaskStatus) => void;
   onTaskClick: (task: Task) => void;
-  onDragLeader?: () => void;
 }
 
 const columnAccents: Record<TaskStatus, string> = {
-  TODO: "bg-stone-400",
-  IN_PROGRESS: "bg-amber-500",
-  IN_REVIEW: "bg-blue-500",
-  DONE: "bg-green-500",
+  TODO: "bg-status-todo",
+  IN_PROGRESS: "bg-status-inprogress",
+  IN_REVIEW: "bg-status-inreview",
+  DONE: "bg-status-done",
 };
 
 export function KanbanBoard({
@@ -40,10 +40,12 @@ export function KanbanBoard({
   onAddTask,
   onTaskClick,
 }: KanbanBoardProps) {
+  const reduceMotion = useReducedMotion();
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } })
   );
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const dragStartRef = useRef<{ id: string; status: TaskStatus } | null>(null);
 
   const tasksByStatus = useMemo(() => {
     const map: Record<TaskStatus, Task[]> = {
@@ -60,59 +62,55 @@ export function KanbanBoard({
     return tasks.find((t) => t.id === id);
   }
 
+  function resolveStatus(overId: string): TaskStatus | null {
+    if (TASK_STATUSES.includes(overId as TaskStatus)) {
+      return overId as TaskStatus;
+    }
+    const overTask = findTask(overId);
+    return overTask?.status ?? null;
+  }
+
   function handleDragStart(event: DragStartEvent) {
     const task = findTask(String(event.active.id));
-    if (task) setActiveTask(task);
+    if (!task) return;
+    setActiveTask(task);
+    dragStartRef.current = { id: task.id, status: task.status };
   }
 
   function handleDragOver(event: DragOverEvent) {
-    const { active, over } = event;
+    const { over } = event;
     if (!over) return;
-    const activeId = String(active.id);
-    const overId = String(over.id);
+    const current = findTask(String(event.active.id));
+    const next = resolveStatus(String(over.id));
+    if (!current || !next || next === current.status) return;
 
-    const activeTask = findTask(activeId);
-    if (!activeTask) return;
-
-    let newStatus: TaskStatus | null = null;
-    if (TASK_STATUSES.includes(overId as TaskStatus)) {
-      newStatus = overId as TaskStatus;
-    } else {
-      const overTask = findTask(overId);
-      if (overTask) newStatus = overTask.status;
-    }
-
-    if (newStatus && activeTask.status !== newStatus) {
-      setTasks((prev) =>
-        prev.map((t) =>
-          t.id === activeId ? { ...t, status: newStatus! } : t
-        )
-      );
-    }
+    setTasks((prev) =>
+      prev.map((t) => (t.id === current.id ? { ...t, status: next } : t))
+    );
   }
 
   function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
+    const { over } = event;
+    const start = dragStartRef.current;
+    dragStartRef.current = null;
     setActiveTask(null);
-    if (!over) return;
 
-    const activeId = String(active.id);
-    const overId = String(over.id);
-    const task = findTask(activeId);
-    if (!task) return;
-
-    let newStatus: TaskStatus;
-    if (TASK_STATUSES.includes(overId as TaskStatus)) {
-      newStatus = overId as TaskStatus;
-    } else {
-      const overTask = findTask(overId);
-      newStatus = overTask?.status ?? task.status;
+    if (!start || !over) return;
+    const next = resolveStatus(String(over.id));
+    if (next && next !== start.status) {
+      persistStatus(start.id, next);
     }
+  }
 
-    if (newStatus === task.status) return;
+  function handleDragCancel() {
+    const start = dragStartRef.current;
+    dragStartRef.current = null;
+    setActiveTask(null);
+    if (!start) return;
 
-    // Optimistic update already applied in dragOver; now persist to server
-    persistStatus(task.id, newStatus);
+    setTasks((prev) =>
+      prev.map((t) => (t.id === start.id ? { ...t, status: start.status } : t))
+    );
   }
 
   async function persistStatus(taskId: string, status: TaskStatus) {
@@ -137,28 +135,44 @@ export function KanbanBoard({
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
-      onDragCancel={() => {
-        setActiveTask(null);
-      }}
+      onDragCancel={handleDragCancel}
     >
       <div className="flex h-full gap-3 overflow-x-auto pb-2">
-        {TASK_STATUSES.map((status) => (
-          <KanbanColumn
+        {TASK_STATUSES.map((status, index) => (
+          <motion.div
             key={status}
-            status={status}
-            label={TASK_STATUS_LABEL[status]}
-            accent={columnAccents[status]}
-            tasks={tasksByStatus[status]}
-            onAddTask={onAddTask}
-            onTaskClick={onTaskClick}
-          />
+            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.06, duration: 0.3, ease: "easeOut" }}
+            className="shrink-0"
+          >
+            <KanbanColumn
+              status={status}
+              label={TASK_STATUS_LABEL[status]}
+              accent={columnAccents[status]}
+              tasks={tasksByStatus[status]}
+              onAddTask={onAddTask}
+              onTaskClick={onTaskClick}
+            />
+          </motion.div>
         ))}
       </div>
       <DragOverlay>
         {activeTask ? (
-          <div className="rotate-2 opacity-90">
+          <motion.div
+            className="w-72"
+            initial={{
+              scale: reduceMotion ? 1 : 1.04,
+              rotate: reduceMotion ? 0 : 2,
+            }}
+            animate={{
+              scale: reduceMotion ? 1 : 1.06,
+              rotate: reduceMotion ? 0 : 2.5,
+            }}
+            transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
+          >
             <TaskCard task={activeTask} onClick={() => {}} />
-          </div>
+          </motion.div>
         ) : null}
       </DragOverlay>
     </DndContext>

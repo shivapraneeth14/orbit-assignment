@@ -32,25 +32,27 @@ export function KanbanColumn({
   return (
     <div
       ref={setNodeRef}
+      data-status={status}
       className={cn(
-        "flex w-72 shrink-0 flex-col rounded-xl bg-stone-100/70",
-        isOver && "ring-2 ring-primary/40 bg-primary-soft/50"
+        "flex w-72 shrink-0 flex-col rounded-xl border border-border-subtle bg-surface-muted/60 shadow-card transition-colors duration-150",
+        isOver && "border-primary/50 ring-2 ring-primary-ring bg-primary-soft/40"
       )}
     >
       <div className="flex items-center justify-between px-3 pb-2 pt-3">
         <div className="flex items-center gap-2">
           <span className={cn("h-2 w-2 rounded-full", accent)} />
-          <span className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+          <span className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
             {label}
           </span>
-          <span className="rounded-md bg-stone-200/70 px-1.5 text-xs font-medium text-stone-500">
+          <span className="rounded-md bg-ink/5 px-1.5 text-xs font-medium text-ink-subtle">
             {tasks.length}
           </span>
         </div>
         <button
           onClick={() => onAddTask(status)}
-          className="rounded-md p-1 text-stone-400 hover:bg-stone-200 hover:text-stone-700"
+          className="rounded-md p-1 text-ink-subtle transition-colors hover:bg-ink/5 hover:text-ink"
           title={`Add task to ${label}`}
+          aria-label={`Add task to ${label}`}
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -65,9 +67,16 @@ export function KanbanColumn({
             <TaskCard key={task.id} task={task} onClick={onTaskClick} />
           ))}
         </SortableContext>
-        {tasks.length === 0 && !isOver && (
-          <div className="rounded-lg border border-dashed border-stone-300 px-3 py-6 text-center text-xs text-stone-400">
-            Drop tasks here
+        {tasks.length === 0 && (
+          <div
+            className={cn(
+              "rounded-lg border border-dashed px-3 py-6 text-center text-xs transition-colors",
+              isOver
+                ? "border-primary/60 bg-primary-soft/40 text-primary"
+                : "border-border-strong text-ink-subtle"
+            )}
+          >
+            {isOver ? "Release to move here" : "Drop tasks here"}
           </div>
         )}
       </div>
